@@ -5,7 +5,7 @@ import (
 	"net/http"
 	//"fmt"
 	"strings"
-	"fmt"
+	//"fmt"
 )
 
 type connection struct {
@@ -47,12 +47,11 @@ type wsHandler struct {
 }
 
 func (wsh wsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	fmt.Println(strings.Split(r.RemoteAddr,":")[0])
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		return
 	}
-	c := &connection{send: make(chan []byte, 256), ws: ws, h: wsh.hubsMap["123"]}
+	c := &connection{send: make(chan []byte, 256), ws: ws, h: wsh.hubsMap[strings.Split(r.RemoteAddr,":")[0]]}
 	c.h.register <- c
 	defer func() { c.h.unregister <- c }()
 	go c.writer()

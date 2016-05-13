@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"path/filepath"
 	"text/template"
-	//"strings"
+	"strings"
 )
 
 var (
@@ -27,10 +27,10 @@ func defaultAssetPath() string {
 var globalMapRemote map[string]int
 var hubsMap map[string]*hub
 func homeHandler(c http.ResponseWriter, req *http.Request) {
-	if(globalMapRemote["123"] == 0){
-		globalMapRemote["123"] = 1
-		hubsMap["123"] = newHub()
-		go hubsMap["123"].run()
+	if(globalMapRemote[strings.Split(req.RemoteAddr,":")[0]] == 0){
+		globalMapRemote[strings.Split(req.RemoteAddr,":")[0]] = 1
+		hubsMap[strings.Split(req.RemoteAddr,":")[0]] = newHub()
+		go hubsMap[strings.Split(req.RemoteAddr,":")[0]].run()
 	}
 	homeTempl.Execute(c, req.Host)
 }
